@@ -1,3 +1,13 @@
+/**
+ * @returns 
+ * function downloadPicture
+ * 
+ * function sharePicture
+ * 
+ * function createTestFile -> demo file using in sharePicture()
+ * 
+ */
+
 export function usePicture() {
     
     const downloadPicture = async ( pictureUrl ) => {

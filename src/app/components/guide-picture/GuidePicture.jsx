@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react"
 import { useStorage } from "@/app/hooks/useStorage";
 import Image from "next/image";
-import { DownloadPictureButton } from "../take-picture/DownloadPictureButton";
-import { SharePictureButton } from "../take-picture/SharePictureButton";
 import { usePicture } from "../take-picture/usePicture";
+import { Button } from "../Button";
 
 export function GuidePicture() {
     const [ peopleCount , setPeopleCount ] = useState(1);
     const { getAllImageUrlFromFolder } = useStorage();
+    
     const [ urls , setUrl] = useState([]);
     const [ localPhoto , setLocalPicture ] = useState({file:null});
+    const { downloadPicture, sharePicture, createTestFile} = usePicture();
 
     const handleClick = async () => {
         const image = await getAllImageUrlFromFolder(peopleCount+'-people');
@@ -17,7 +18,6 @@ export function GuidePicture() {
         // console.log(image);
     }
 
-    const { createTestFile } = usePicture();
     // Fix 1: Wrap the test file creation in a useEffect so it only runs ONCE
     useEffect(() => {
         const initTestFile = async () => {
@@ -35,15 +35,9 @@ export function GuidePicture() {
     <li><button onClick={()=>setPeopleCount(4)}>4 person</button></li>
     <li><button onClick={handleClick}>load image</button></li>
 
-    <SharePictureButton
-        pictureUrl={urls[0]}
-        pictureFile={localPhoto.file}
-        buttonText="Click to share"
-    />
-    <DownloadPictureButton
-        pictureUrl={urls[0]}
-        buttonText="Click to download"
-    />
+    <Button buttonType="primary" onClick={()=>sharePicture(urls[0], localPhoto.file)}>Click to Share</Button>
+    <Button buttonType="primary" onClick={()=>downloadPicture(urls[0])}>Click to download</Button>
+
 
     </ul>
         {urls[0] === "" ? null : (
