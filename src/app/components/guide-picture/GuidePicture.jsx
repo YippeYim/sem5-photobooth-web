@@ -36,7 +36,7 @@ export function GuidePicture() {
     <li><button onClick={handleClick}>load image</button></li>
 
     <Button buttonType="primary" onClick={()=>sharePicture(urls[0], localPhoto.file)}>Click to Share</Button>
-    <Button buttonType="primary" onClick={()=>downloadPicture(urls[0])}>Click to download</Button>
+    <Button buttonType="secondary" onClick={()=>downloadPicture(urls[0])}>Click to download</Button>
 
 
     </ul>
