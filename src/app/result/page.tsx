@@ -8,21 +8,30 @@ export default function ResultPage() {
   const [finalImg, setFinalImg] = useState<string>("");
 
   useEffect(() => {
-    const photos = JSON.parse(localStorage.getItem("photos") || "[]");
+    async function generate() {
+      const photos = JSON.parse(localStorage.getItem("photos") || "[]");
+      const frame = localStorage.getItem("frame") || "";
 
-    createPhotoStrip(photos).then(setFinalImg);
+      if (!photos.length || !frame) return;
+
+      const result = await createPhotoStrip(photos, frame);
+      setFinalImg(result);
+    }
+
+    generate();
   }, []);
 
   const download = () => {
+    if (!finalImg) return;
     saveAs(finalImg, "stickisnap.png");
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 p-6">
       <h1 className="text-3xl">Result</h1>
 
       {finalImg && (
-        <img src={finalImg} className="rounded-xl shadow-lg" />
+        <img src={finalImg} className="w-[300px] rounded-xl shadow-lg" />
       )}
 
       <button
