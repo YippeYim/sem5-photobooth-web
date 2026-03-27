@@ -1,5 +1,5 @@
-import { supabase } from "@/lib/supabase";
-import { CONSTANTS } from "@/lib/constants";
+import { supabase } from "../../lib/supabase";
+import { CONSTANTS } from "../../lib/constants";
 
 export const useStorage = () => {
 
