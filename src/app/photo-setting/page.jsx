@@ -61,11 +61,11 @@ export default function SettingPage(){
 
         {/* choose how many people for guide picture */}
         {frameNum !== null && userSelection.frame !== null && userSelection.peopleSize === null && (
-            <ChoosePeopleSize setUserSelection={setUserSelection}/>
+            <ChoosePeopleSize setUserSelection={setUserSelection} handleStart={handleStart}/>
         )}
     
         {/* the start button that change page when all setting done! */}
-        {frameNum !== null && userSelection.frame !== null && userSelection.peopleSize !== null && (
+        {frameNum !== null && userSelection.frame !== null &&(
             <Button buttonType="primary" onClick={handleStart} >
                 Start
             </Button>

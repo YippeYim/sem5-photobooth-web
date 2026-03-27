@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button } from "../Button";
 import { getFileNameFromUrl } from "../../../lib/utils";
 
-export function ChooseDesign({setUserSelection}) {
+export function ChooseDesign({frameNum ,setUserSelection}) {
     const [ selectedIndex, setSelectedIndex] = useState(0);
     
     // load the design picture and make the select section then set the selection to file name
@@ -21,7 +21,7 @@ export function ChooseDesign({setUserSelection}) {
     useEffect(()=>{
     const fetchFrames = async () => {
       try {
-        const urls = await getAllImageUrlFromFolder("3-slot", "frame-bucket");
+        const urls = await getAllImageUrlFromFolder(`${frameNum}-slot`, "frame-bucket");
         setImages(urls);
       } catch (error) {
         console.error("Failed to fetch frames:", error);

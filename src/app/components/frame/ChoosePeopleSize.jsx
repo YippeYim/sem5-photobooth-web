@@ -1,12 +1,24 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "../Button";
+
 export function ChoosePeopleSize({setUserSelection}) {
+  const [count, setCount] = useState(1);
 
-    return <>
-    How many you members?<br/>
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      
+      <h1 className="text-3xl mb-6">How many members?</h1>
 
-    mockup button
-    <button onClick={()=>setUserSelection(prev=>({...prev, peopleSize:1}))}>1</button>
-    <button onClick={()=>setUserSelection(prev=>({...prev, peopleSize:2}))}>2</button>
-    <button onClick={()=>setUserSelection(prev=>({...prev, peopleSize:3}))}>3</button>
-    <button onClick={()=>setUserSelection(prev=>({...prev, peopleSize:4}))}>4</button>
-    </>
+      <div className="flex items-center gap-6 text-4xl">
+        <button onClick={() => setCount(Math.max(1, count - 1))}>{"<"}</button>
+        <span>{count}</span>
+        <button onClick={() => setCount(count + 1)}>{">"}</button>
+      </div>
+      
+      <Button onClick={()=>setUserSelection(prev=>({...prev, peopleSize:count}))}>Select</Button>
+
+    </div>
+  );
 }
