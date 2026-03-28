@@ -65,12 +65,13 @@ export default function SettingPage(){
         )}
     
         {/* the start button that change page when all setting done! */}
+        <div className="flex items-center w-full justify-center">
         {frameNum !== null && userSelection.frame !== null &&(
-            <Button buttonType="primary" onClick={handleStart} >
+            <Button className="scale-100" buttonType="primary" onClick={handleStart} >
                 Start
             </Button>
         )}
-        
+        </div>
         </PageLayout>
     </>
 };
