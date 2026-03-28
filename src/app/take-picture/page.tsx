@@ -91,8 +91,7 @@ export default function CameraPage() {
           className="rounded-xl"
         />
 
-        {!isDone && (<button className="rounded-full py-1 px-4 
-                  border-4 cursor-pointer" onClick={capture}>Capture</button>
+        {!isDone && (<button className="rounded-full py-1 px-4 border-4 cursor-pointer" onClick={capture}>Capture</button>
         )}
 
         {isDone && (<>
