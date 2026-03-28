@@ -93,7 +93,7 @@ export default function CameraPage() {
         />
 
         {!isDone && (<button className="rounded-full py-1 px-4 
-                  border-4 cursor-pointer`}" onClick={capture}>Capture</button>
+                  border-4 cursor-pointer" onClick={capture}>Capture</button>
         )}
 
         {isDone && (<>
