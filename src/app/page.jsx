@@ -34,7 +34,7 @@ export default function Home() {
     <PageLayout>
     <Header/>
     
-    <div className="flex flex-row justify-center items-center gap-4 w-full max-w-2xl mx-auto p-20 gap-10 outline outline-red-500">
+    <div className="flex flex-row justify-center items-center gap-4 w-full max-w-2xl mx-auto p-20 gap-10 ">
        <img src={frameUrls[0]} className="w-1/3 h-auto -rotate-3 shadow-md border-4 border-white" />
        <img src={frameUrls[1]} className="w-1/3 h-auto rotate-1 shadow-md border-4 border-white" />
        <img src={frameUrls[2]} className="w-1/3 h-auto rotate-6 shadow-md border-4 border-white" />
