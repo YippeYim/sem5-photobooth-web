@@ -43,13 +43,13 @@ export default function SettingPage(){
         {/* choose how many frame */}
         {frameNum === null && (
             <FourChoiceGrid>
-                <div className="flex flex-col justify-end items-center pb-4 text-6xl border border-black rounded rounded-[3rem] bg-white"
+                <div className="flex flex-col justify-end items-center pb-4 text-[clamp(1.5rem,6vw,4rem)] border border-black rounded rounded-[3rem] bg-white"
                     onClick={()=>handleFrameNumSelect(2)}>2 Frames</div>
-                <div className="flex flex-col justify-end items-center pb-4 text-6xl border border-black rounded rounded-[3rem] bg-white"
+                <div className="flex flex-col justify-end items-center pb-4 text-[clamp(1.5rem,6vw,4rem)] border border-black rounded rounded-[3rem] bg-white"
                     onClick={()=>handleFrameNumSelect(3)}>3 Frames</div>
-                <div className="flex flex-col justify-end items-center pb-4 text-6xl border border-black rounded rounded-[3rem] bg-white"
+                <div className="flex flex-col justify-end items-center pb-4 text-[clamp(1.5rem,6vw,4rem)] border border-black rounded rounded-[3rem] bg-white"
                     onClick={()=>handleFrameNumSelect(4)}>4 Frames</div>
-                <div className="flex flex-col justify-end items-center pb-4 text-6xl border border-black rounded rounded-[3rem] bg-white"
+                <div className="flex flex-col justify-end items-center pb-4 text-[clamp(1.5rem,6vw,4rem)] border border-black rounded rounded-[3rem] bg-white"
                     onClick={()=>handleFrameNumSelect(6)}>6 Frames</div>
             </FourChoiceGrid>
             )}
