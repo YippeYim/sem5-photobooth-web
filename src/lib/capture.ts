@@ -1,89 +1,142 @@
 export async function createPhotoStrip(
-  images: string[],
-  frameSrc: string
-) {
-  // 1. Safety Check for Next.js SSR
-  if (typeof window === "undefined") return "";
+  photos: string[],
+  framePath: string
+): Promise<string> {
+  const frame = await loadImage(framePath);
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
-  const count = images.length;
 
-  let positions: { x: number; y: number; w: number; h: number }[] = [];
+  canvas.width = frame.width;
+  canvas.height = frame.height;
 
-  // 2. Define Canvas Size and Positions based on count
-  if (count === 2) {
-    canvas.width = 1080;
-    canvas.height = 1920;
-    positions = [
-      { x: 120, y: 250, w: 840, h: 500 },
-      { x: 120, y: 950, w: 840, h: 500 },
-    ];
-  } else if (count === 3) {
-    canvas.width = 1080;
-    canvas.height = 1920;
-    positions = [
-      { x: 120, y: 180, w: 840, h: 400 },
-      { x: 120, y: 780, w: 840, h: 400 },
-      { x: 120, y: 1380, w: 840, h: 400 },
-    ];
-  } else if (count === 4) {
-    canvas.width = 1080;
-    canvas.height = 1400;
-    positions = [
-      { x: 100, y: 180, w: 380, h: 300 },
-      { x: 600, y: 180, w: 380, h: 300 },
-      { x: 100, y: 600, w: 380, h: 300 },
-      { x: 600, y: 600, w: 380, h: 300 },
-    ];
-  } else if (count === 6) {
-    canvas.width = 1080;
-    canvas.height = 1600;
-    positions = [
-      { x: 100, y: 120, w: 380, h: 250 },
-      { x: 600, y: 120, w: 380, h: 250 },
-      { x: 100, y: 450, w: 380, h: 250 },
-      { x: 600, y: 450, w: 380, h: 250 },
-      { x: 100, y: 780, w: 380, h: 250 },
-      { x: 600, y: 780, w: 380, h: 250 },
-    ];
+  // วาด frame ลง canvas
+  ctx.drawImage(frame, 0, 0);
+
+  // =========================
+  // 🔥 อ่าน pixel ของ frame
+  // =========================
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  // หาโซนสีดำ (ช่องรูป)
+  const boxes: { x: number; y: number; w: number; h: number }[] = [];
+  const visited = new Set<string>();
+
+  function isBlack(i: number) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    return r < 30 && g < 30 && b < 30; // threshold
   }
 
-  // 3. Set Background
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function floodFill(startX: number, startY: number) {
+    const stack = [[startX, startY]];
+    let minX = startX,
+      maxX = startX,
+      minY = startY,
+      maxY = startY;
 
-  // 4. Load all User Photos in Parallel (Faster)
-  const loadedPhotos = await Promise.all(
-    images.map((src) => {
-      return new Promise<HTMLImageElement>((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous"; // Prevents Canvas Tainting
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = src;
-      });
-    })
-  );
+    while (stack.length) {
+      const [x, y] = stack.pop()!;
+      const key = `${x},${y}`;
+      if (visited.has(key)) continue;
+      visited.add(key);
 
-  // 5. Draw Photos onto Canvas
-  loadedPhotos.forEach((img, i) => {
-    const p = positions[i];
-    if (p) ctx.drawImage(img, p.x, p.y, p.w, p.h);
-  });
+      const idx = (y * canvas.width + x) * 4;
+      if (!isBlack(idx)) continue;
 
-  // 6. Load and Draw Frame Overlay (Last Layer)
-  const frame = new Image();
-  frame.crossOrigin = "anonymous"; 
-  frame.src = frameSrc;
-  
-  await new Promise((resolve, reject) => {
-    frame.onload = resolve;
-    frame.onerror = reject;
-  });
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y);
+      maxY = Math.max(maxY, y);
 
-  ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+      if (x > 0) stack.push([x - 1, y]);
+      if (x < canvas.width - 1) stack.push([x + 1, y]);
+      if (y > 0) stack.push([x, y - 1]);
+      if (y < canvas.height - 1) stack.push([x, y + 1]);
+    }
 
-  // 7. Return Result
+    return {
+      x: minX,
+      y: minY,
+      w: maxX - minX,
+      h: maxY - minY,
+    };
+  }
+
+  // loop หา box
+  for (let y = 0; y < canvas.height; y += 5) {
+    for (let x = 0; x < canvas.width; x += 5) {
+      const idx = (y * canvas.width + x) * 4;
+      const key = `${x},${y}`;
+      if (!visited.has(key) && isBlack(idx)) {
+        const box = floodFill(x, y);
+
+        // กัน noise (ต้องใหญ่พอ)
+        if (box.w > 100 && box.h > 100) {
+          boxes.push(box);
+        }
+      }
+    }
+  }
+
+  // เรียงจากบนลงล่าง
+  boxes.sort((a, b) => a.y - b.y);
+
+  // =========================
+  // 🔥 วาดรูปลงแต่ละช่อง
+  // =========================
+  for (let i = 0; i < photos.length; i++) {
+    const img = await loadImage(photos[i]);
+    const box = boxes[i];
+    if (!box) continue;
+
+    drawImageCover(ctx, img, box.x, box.y, box.w, box.h);
+  }
+
+  // วาด frame ทับ
+  ctx.drawImage(frame, 0, 0);
+
   return canvas.toDataURL("image/png");
+}
+
+// =========================
+// 📌 helper
+// =========================
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
+    img.onload = () => resolve(img);
+  });
+}
+
+function drawImageCover(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number,
+  y: number,
+  w: number,
+  h: number
+) {
+  const imgRatio = img.width / img.height;
+  const boxRatio = w / h;
+
+  let sx = 0,
+    sy = 0,
+    sw = img.width,
+    sh = img.height;
+
+  if (imgRatio > boxRatio) {
+    sw = img.height * boxRatio;
+    sx = (img.width - sw) / 2;
+  } else {
+    sh = img.width / boxRatio;
+    sy = (img.height - sh) / 2;
+  }
+
+  ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
 }
