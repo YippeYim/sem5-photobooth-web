@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+// นำเข้า Button component มาใช้ (เช็ค path ให้ตรงกับโฟลเดอร์ของคุณด้วยนะคะ)
+import { Button } from "../Button"; 
 
 export default function Camera({
   onCapture,
@@ -34,19 +36,20 @@ export default function Camera({
 
     ctx.drawImage(video, 0, 0);
 
-    const img = canvas.toDataURL("image/png");
+    // 🌟 เปลี่ยนจาก image/png เป็น image/jpeg และใส่คุณภาพ 0.8 (80%) ตรงนี้ค่ะ 🌟
+    // ไฟล์จะเบาลงเยอะมาก ทำให้หน้า Result โหลดรูปมาต่อกันได้ไวขึ้นสุดๆ!
+    const img = canvas.toDataURL("image/jpeg", 0.8);
     onCapture(img);
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <video ref={videoRef} autoPlay className="rounded-xl w-[400px]" />
-      <button
-        onClick={capture}
-        className="bg-pink-300 px-6 py-2 rounded-full"
-      >
+    <div className="flex flex-col items-center gap-6">
+      <video ref={videoRef} autoPlay className="rounded-2xl w-[450px] shadow-lg border-4 border-white" />
+      
+      {/* เปลี่ยนมาใช้ Button เหมือนหน้าแรก */}
+      <Button buttonType="primary" onClick={capture}>
         Capture
-      </button>
+      </Button>
 
       <canvas ref={canvasRef} className="hidden" />
     </div>

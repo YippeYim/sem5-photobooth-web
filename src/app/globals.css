@@ -2,12 +2,20 @@
 
 /* custom */
 :root {
+  /* Keep existing vars, but add new ones */
   --background: #fff7fb;
   --foreground: #171717;
 
-  --button-primary: #F2C1F2;
+  /* New Color Palette Variables */
+  --color-pink: #FE9EC7;
+  --color-cream: #F9F6C4;
+  --color-light-blue: #89D4FF;
+  --color-dark-blue: #44ACF;
+
+  /* Update Button Primary from #F2C1F2 to new Pink */
+  --button-primary: var(--color-pink);
+  --button-primary-hover: #F2A9B2; /* slightly darker pink for hover */
   --button-secondary: #ffffff;
-  
 }
 
 @theme inline {
@@ -18,9 +26,24 @@
   
   --color-button-primary: var(--button-primary);
   --color-button-secondary: var(--button-secondary);
-}
 
+  /* Theme colors */
+  --color-pink-border: var(--color-pink);
+  --color-cream-bg: var(--color-cream);
+  --color-dark-blue-text: var(--color-dark-blue);
+  --color-dark-blue-border: var(--color-dark-blue);
+}
 
 body {
   background: var(--background);
+}
+
+/* Custom button classes to apply hover/shadow */
+.button-pink-bg {
+  background-color: var(--color-pink);
+  color: white;
+}
+
+.button-pink-hover-bg:hover {
+  background-color: var(--button-primary-hover);
 }

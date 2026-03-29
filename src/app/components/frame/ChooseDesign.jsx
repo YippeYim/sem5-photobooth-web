@@ -39,8 +39,9 @@ export function ChooseDesign({frameNum ,setUserSelection}) {
     
     return <>
         <ImageRoller images={images} setSelectedIndex={setSelectedIndex}/>
-        <div className="flex w-full justify-center">
-          <Button onClick={handleClick}>Select</Button>
+        <div className="flex w-full justify-center mt-6">
+          {/* เติม buttonType="primary" ตรงนี้ค่ะ */}
+          <Button buttonType="primary" onClick={handleClick}>Select</Button>
         </div>
     </>
 }
